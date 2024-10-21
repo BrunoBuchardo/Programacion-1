@@ -12,3 +12,4 @@ if resultado:
     print(f"Cadena válida: {resultado}")
 else:
     print("La longitud de la cadena es incorrecta.")
+

@@ -24,91 +24,113 @@ Todo el desarrollo tiene que estar modularizado: ingreso de datos, validaciones 
 generación y verificación de existencia de legajo, cálculos, etc.
 """
 
-
+# Matriz de legajos de choferes
 legajo_colectiveros = [
     [3014, 5451, 8745, 9854, 1496],
     [4758, 3625, 4561, 9874, 3219],
-    [4758, 6958, 3625, 1425, 4510]
-    ]
+    [6958, 1425, 4510, 6547, 8793]
+]
 
 
-# Valido el legajo
+# Validar legajo del chofer
 def validar_legajo(legajo_colectiveros: list):
-    ingrese_legajo = get_int("Ingrese su numero de legajo: ", "Ingrese su numero de legajo valido: ", 1000, 9999, 3)
+    while True:
+        ingrese_legajo = get_int("Ingrese su numero de legajo: ", "Ingrese un numero de legajo valido: ", 1000, 9999, 3)
 
-    for i in range(len(legajo_colectiveros)):
-        for j in range(len(legajo_colectiveros[i])):
-            if ingrese_legajo == legajo_colectiveros[i][j]:
-                return True
+        for fila in legajo_colectiveros:
+            if ingrese_legajo in fila:
+                return True  # Legajo encontrado
+        
+        print("Legajo inválido. Por favor, reingrese el legajo.")
 
 
-# Creo la matriz con las dimesiones correspondientes 
+# Crear matriz de recaudaciones
 def matriz_lineas_coches(filas, columnas):
-    matriz = [[0] * columnas for _ in range(filas)]
-    return matriz
+    return [[0] * columnas for _ in range(filas)]
 
 
-# Ingresar los datos necesarios 
+# Ingresar recaudaciones por línea y coche
 def ingresar_datos(matriz):
-
     while True:
         columna = get_int("Ingrese el coche: ", "Error, ingrese un coche valido: ", 1, 5, 3)
         fila = get_int("Ingrese la linea: ", "Error, ingrese una linea valida: ", 1, 3, 3)
-
-        if fila < 1 or fila > len(matriz) or columna < 1 or columna > len(matriz[0]):
-            print("Fila o columna fuera de rango.")
-            continue
 
         recaudacion = get_float("Ingrese la recaudacion: ", "Error, ingrese una recaudacion valida: ", 0, 999999, 3)
         matriz[fila - 1][columna - 1] += recaudacion
 
         continuar = input("¿Desea cargar otra recaudación? (S/N): ")
-        print() 
         if continuar.upper() != 'S':
             break
 
 
-# Mostrar la matriz con los datos
-def mostrar_matriz(matriz):
-    for fila in matriz:
-        print(fila)
-
-
-# Mostrar la recaudación de cada coche y línea
+# Mostrar recaudación por coche y línea
 def mostrar_recaudacion_por_coche_y_linea(matriz):
     for i in range(len(matriz)):
         for j in range(len(matriz[i])):
             print(f"Línea {i+1}, Coche {j+1}: ${matriz[i][j]}")
-        print() 
+        print()
 
 
-# Calcular y mostrar recaudacion por linea
+# Calcular y mostrar recaudación por línea
 def recaudacion_por_linea(matriz):
-    
     for i in range(len(matriz)):
+        recaudacion_total_linea = 0  # Se inicializa fuera del bucle interno
         for j in range(len(matriz[i])):
-            recaudacion_total_linea = 0
             recaudacion_total_linea += matriz[i][j]
         print(f"Recaudación total para la línea {i+1}: ${recaudacion_total_linea}")
-    print() 
+    print()
 
 
-# Calcular y mostrar recaudacion por coche
+# Calcular y mostrar recaudación por coche
 def recaudacion_por_coche(matriz):
-
     for j in range(len(matriz[0])):
+        recaudacion_total_coche = 0  # Se inicializa fuera del bucle interno
         for i in range(len(matriz)):
-            recaudacion_total_coche = 0
             recaudacion_total_coche += matriz[i][j]
         print(f"Recaudación total para el coche {j+1}: ${recaudacion_total_coche}")
-    print() 
+    print()
 
 
-# Calcular y mostrar el total de las recaudaciones
+# Calcular y mostrar recaudación total
 def recaudacion_total(matriz):
     total = 0
     for fila in matriz:
         for valor in fila:
             total += valor
     print(f"Recaudación total de todas las líneas y coches: ${total}")
-    print() 
+    print()
+
+
+# Menú de opciones
+def menu_opciones():
+    if not validar_legajo(legajo_colectiveros):
+        print("Legajo inválido.")
+        return
+
+    matriz = matriz_lineas_coches(3, 5)
+    ingresar_datos(matriz)
+
+    while True:
+        print("Menu:\n"
+              "A. Mostrar la recaudación de cada coche y línea.\n"
+              "B. Calcular y mostrar recaudación por línea.\n"
+              "C. Calcular y mostrar recaudación por coche.\n"
+              "D. Calcular y mostrar la recaudación total.\n"
+              "E. Salir")
+
+        opcion = input("Seleccione una opcion: ").upper()
+
+        match opcion:
+            case "A":
+                mostrar_recaudacion_por_coche_y_linea(matriz)
+            case "B":
+                recaudacion_por_linea(matriz)
+            case "C":
+                recaudacion_por_coche(matriz)
+            case "D":
+                recaudacion_total(matriz)
+            case "E":
+                break
+
+
+menu_opciones()
